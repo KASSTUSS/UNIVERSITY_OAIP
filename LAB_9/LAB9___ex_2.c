@@ -26,10 +26,11 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+#include <conio.h>
 #include <locale.h>
 
-void inputInfo(void);
-int save(char*);
+void inputToFile(void);
+int saveFile(char*);
 int printInfo(char*);
 int findInfo(char*);
 
@@ -72,7 +73,7 @@ int main(void)
 		switch(userChoise)
 		{
 			case 1:
-				inputInfo();
+				inputToFile();
 				break;
 
 			case 2:
@@ -84,7 +85,7 @@ int main(void)
 				break;
 
 			case 4:
-				save(filename);
+				saveFile(filename);
 				break;
 
 			case 0:
@@ -92,7 +93,7 @@ int main(void)
 				break;
 
 			default: 
-				menu();
+				main();
 		}
 
 	} while (userChoise != 0);
@@ -103,7 +104,7 @@ int main(void)
     return 0;
 }
 
-void inputInfo(void)
+void inputToFile(void)
 {
 	;
 
@@ -133,7 +134,7 @@ void inputInfo(void)
 	studentsCounter++;
 }
 
-int save(char *filename)
+int saveFile(char *filename)
 {
     FILE *structFile;
     char *c;
@@ -163,7 +164,7 @@ int save(char *filename)
     return 0;
 }
 
-void printFindInfo(int k, struct student *info)
+void printFoundedInfo(int k, struct student *info)
 {
 	 printf("\nФИО: %s %s %s \nАдрес: %s%s \nГруппа: %s \nРейтинг: %d\n\n", (info + k)->name[0],
         					 											  (info + k)->name[1], 
@@ -181,7 +182,7 @@ int printInfo(char *filename)
     int m = sizeof(int);
     int n, l;
  
-    int *saveStruct = (int*)malloc(m);
+    int *saveFileStruct = (int*)malloc(m);
  
     if ((structFile = fopen(filename, "r")) == NULL)
     {
@@ -189,7 +190,7 @@ int printInfo(char *filename)
         return 1;
     }
 
-    c = (char *)saveStruct;
+    c = (char *)saveFileStruct;
     while (m > 0)
     {
         l = getc(structFile);
@@ -199,7 +200,7 @@ int printInfo(char *filename)
         m--;
     }
    
-    n = *saveStruct;
+    n = *saveFileStruct;
  
     struct student *info = (struct student*)malloc(n*sizeof(struct student));
     c = (char *)info;
@@ -212,10 +213,10 @@ int printInfo(char *filename)
  
     for (int k = 0; k < n; k++)
     {
-    	printFindInfo(k, info);
+    	printFoundedInfo(k, info);
     }
  
-    free(saveStruct);
+    free(saveFileStruct);
     free(info);
     fclose(structFile);
     return 0;
@@ -228,7 +229,7 @@ int findInfo(char *filename)
     int m = sizeof(int);
     int n, l;
  
-    int *saveStruct = (int*)malloc(m);
+    int *saveFileStruct = (int*)malloc(m);
  
     if ((structFile = fopen(filename, "r")) == NULL)
     {
@@ -236,7 +237,7 @@ int findInfo(char *filename)
         return 1;
     }
 
-    c = (char *)saveStruct;
+    c = (char *)saveFileStruct;
     while (m > 0)
     {
         l = getc(structFile);
@@ -246,7 +247,7 @@ int findInfo(char *filename)
         m--;
     }
    
-    n = *saveStruct;
+    n = *saveFileStruct;
  
     struct student *info = (struct student*)malloc(n*sizeof(struct student));
     c = (char *)info;
@@ -292,7 +293,7 @@ int findInfo(char *filename)
 				if(helpCount == 3) 
 				{
 					printf("Информация найдена\n");
-					printFindInfo(i, info);
+					printFoundedInfo(i, info);
 					helpCount = 0;
 					check = 0;
 				}
@@ -322,7 +323,7 @@ int findInfo(char *filename)
 				if(helpCount == 2) 
 				{
 					printf("Информация найдена\n");
-					printFindInfo(i, info);
+					printFoundedInfo(i, info);
 					helpCount = 0;
 					check = 0;
 				}
@@ -344,7 +345,7 @@ int findInfo(char *filename)
 			{
 				if (strcmp((info+i)->group, findGroup) == 0) {
                     printf("Информация найдена\n");
-					printFindInfo(i, info);
+					printFoundedInfo(i, info);
 					check = 0;
                 }
 			}
@@ -364,7 +365,7 @@ int findInfo(char *filename)
 				if ( (info+i)->rating == findRating )
 				{
 					printf("Информация найдена\n");
-					printFindInfo(i, info);
+					printFoundedInfo(i, info);
 					check = 0;
 				}
 			}
@@ -377,7 +378,7 @@ int findInfo(char *filename)
 			findInfo(filename);
 	}
  
-    free(saveStruct);
+    free(saveFileStruct);
     free(info);
     fclose(structFile);
     return 0;
