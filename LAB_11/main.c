@@ -12,7 +12,7 @@
     26.04.2021
 */
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> 
 #include <malloc.h>
 #include <math.h>
 #include <string.h>
@@ -24,7 +24,11 @@
 void scanMatrix( double **MatrixA, double *MatrixB, int N );
 void transformationMatrix( double **MatrixA, double *MatrixB, int N );
 void printMatrix ( double **Matrix, double *BMatrix, int N );
-void Itera( double **MatrixA, double *MatrixB, int N );
+void RowSum( double **MatrixA, double *MatrixB, int r1, int r2, float c, const int columnsCount);
+void Zeidel(double *matX, double *matRes, double **MatrixA, double *MatrixB, int N );
+void Itera(double *matX, double *matRes, double **MatrixA, double *MatrixB, int N );
+void Solve( double **MatrixA, double *MatrixB, int N );
+
 
 double Normalize( double **MatrixA, int N );
 double Pogr( double **MatrixA, int N );
@@ -87,7 +91,7 @@ int main()
     printf("Преображенная матрица:\n");
     printMatrix(mainMatrix, BMatrix, amountVar);
 
-    Itera(mainMatrix, BMatrix, amountVar);
+    Solve(mainMatrix, BMatrix, amountVar);
     
     getch();
     return 0;
@@ -112,6 +116,13 @@ void scanMatrix( double **MatrixA, double *MatrixB, int N )
     }
 }
 
+void RowSum(double **MatrixA, double *MatrixB, int r1, int r2, float c, const int columnsCount)
+{
+    for (int i = 0; i < columnsCount; i++)
+        MatrixA[r2][i] += MatrixA[r1][i] * c;
+        MatrixB[r2] += MatrixB[r1] * c;
+}
+
 void printMatrix ( double **MatrixA, double *MatrixB, int N )
 {
     for( int i = 0; i < N; i++ ) 
@@ -126,6 +137,8 @@ void printMatrix ( double **MatrixA, double *MatrixB, int N )
 
 void transformationMatrix( double **MatrixA, double *MatrixB, int N )
 {
+    RowSum(MatrixA, MatrixB, 0, 2, -0.17, N);
+
     double temp = 0;
     for (int k = 0; k < N; k++)
     {
@@ -176,35 +189,95 @@ int converge(double *k, double *p, double **MatrixA, int N)
         return 1;
     return 0;
 }
-void Itera( double **MatrixA, double *MatrixB, int N )
+void Solve( double **MatrixA, double *MatrixB, int N )
 {
     double *x = (double *)malloc(N*sizeof(double));
     double *p = (double *)malloc(N*sizeof(double));
 
-    for (int i = 0; i < N; i++)
+    printf("%s\n\n%s\n%s\n", "Выберите метод решения СЛАУ:", "(1) Метод простых итераций", "(2) Метод Зейделя");
+
+    int choice = 0;
+
+    do{
+        scanf("%d", &choice);
+    } while (choice < 1 && choice > 2);
+
+    switch (choice)
     {
-        x[i] = MatrixB[i];
-        p[i] = 0;
+        case 1:
+            do{
+                Itera( x, p, MatrixA, MatrixB, N );
+            } while (converge( x, p, MatrixA, N ));
+            break;
+
+        case 2:
+            do{
+                Zeidel( x, p, MatrixA, MatrixB, N );
+            } while (converge( x, p, MatrixA, N ));
+            break;
+        
+        default:
+            break;
     }
-    do
-    {
-        for (int i = 0; i < N; i++)
-            p[i] = x[i];
-        for (int i = 0; i < N; i++)
-        {
-            double var = 0;
-            for (int j = 0; j < i; j++)
-            {
-                var += (MatrixA[i][j] * x[j]);
-            }
-            for (int j = i + 1; j < N; j++)
-                var += (MatrixA[i][j] * p[j]);
-            x[i] = (MatrixB[i] - var) / MatrixA[i][i];
-        }
-    } while (converge(x,p,MatrixA,N));
 
     for (int i = 0; i < N; i++)
     {
         printf("x[%d] = %.2f ;\n", i+1, x[i]);
     }
+}
+
+void Itera(double *matX, double *matRes, double **MatrixA, double *MatrixB, int N )
+{
+    float elementsSum = 0;
+    static int iteration;
+
+    if (iteration != 0) 
+        for (int i = 0; i < N; i++)
+            matX[i] = matRes[i];
+    else
+        for (int i = 0; i < N; i++)
+            matX[i] = MatrixB[i];
+        
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+            if (i != j) elementsSum += MatrixA[i][j] * matX[j];
+
+        matRes[i] = (MatrixB[i] - elementsSum) / MatrixA[i][i];
+        elementsSum = 0;
+    }
+
+    iteration++;
+}
+
+
+void Zeidel(double *matX, double *matRes, double **MatrixA, double *MatrixB, int N )
+{
+    float elementsSum = 0;
+    static int iteration;
+
+    if (iteration != 0) 
+        for (int i = 0; i < N; i++)
+            matX[i] = matRes[i];
+    else
+        for (int i = 0; i < N; i++)
+            matX[i] = MatrixB[i];
+        
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = i+1; j < N; j++)
+            if (i != j) elementsSum += MatrixA[i][j] * matX[j];
+
+        matRes[i] = (MatrixB[i] - elementsSum) / MatrixA[i][i];
+        elementsSum = 0;
+
+        for (int j = 0; j < i; j++)
+            if (i != j) elementsSum += MatrixA[i][j] * matRes[j];
+        elementsSum /= -MatrixA[i][i];
+        
+        matRes[i] += elementsSum;
+        elementsSum = 0;
+    }
+
+    iteration++;
 }
