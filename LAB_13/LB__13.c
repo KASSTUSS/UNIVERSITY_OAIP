@@ -37,7 +37,7 @@ void printArray ( int *Arr, int len );
 void scanArray ( int *Arr, int len );
 void setUp ( int *A, int *B );
 void scanWithChecking ( int *x, int min, int max, char *text );
-void scanWithIncreasingChecking ( int *x, int *y, int i, char *text );
+void scanWithIncreasingChecking ( int *x, int *y, int i );
 
 void InPlaceMergeSort ( int *A, int *B, int N, int M );
 
@@ -58,8 +58,8 @@ int main( void )
     scanf("%d", &ans);
 
     if( ans == 1 ) {
-        scanWithChecking ( &N, LIM_MIN, LIM_MAX, "\nВведите количество элементов первой последовательности" );
-        scanWithChecking ( &M, LIM_MIN, LIM_MAX, "\nВведите количество элементов второй последовательности" );
+        scanWithChecking ( &N, LIM_MIN, LIM_MAX, "\nВведите количество элемента первой последовательности" );
+        scanWithChecking ( &M, LIM_MIN, LIM_MAX, "\nВведите количество элемента второй последовательности" );
         
         A = (int *)malloc(N*sizeof(int));
         B = (int *)malloc(M*sizeof(int));
@@ -112,7 +112,7 @@ void scanArray ( int *Arr, int len )
 {
     for( int i = 0; i < len; i++ )
     {
-        scanWithIncreasingChecking ( (Arr+i), (Arr+i-1), i, "Введите %d-й элемент массива: " );
+        scanWithIncreasingChecking ( (Arr+i), (Arr+i-1), i );
     }
 }
 
@@ -144,12 +144,12 @@ void scanWithChecking ( int *x, int min, int max, char *text )
     } while ( check );
 }
 
-void scanWithIncreasingChecking ( int *x, int *y, int i, char *text ) 
+void scanWithIncreasingChecking ( int *x, int *y, int i ) 
 {
     int check = 0;
 
     do {
-        printf("%s: ", text, i+1);
+        printf("Введите %d-й элемент массива: ", i+1);
         scanf("%d", x);
         if( *x < *y ) {
             printf("ОШИБКА! Введите значение не меньше предыдущего!\n\n");
@@ -189,4 +189,3 @@ int *getValueFromINdex ( int i, int *A, int *B, int N )
         return (B+i-N);
     }
 }
-
