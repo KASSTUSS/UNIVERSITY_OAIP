@@ -16,6 +16,9 @@
     Поэтому сортировка будет производится более медленным, но не меннее 
     производительным методом сортировки In-Place Merge Sort, который не требует 
     дополнительного массива.
+        Так как оба массива по услувию уже являются отсортированными, то нам
+    остается лишь выбрать шаг и, путем сравнения и замены местами значений элементов
+    массивов, отсортировать два данных массива. 
     
     ВЫПОЛНИЛ: 
         студент группы МС-12 ЧВАЛОВ К.Р.
@@ -29,20 +32,20 @@
 #include <conio.h>
 #include <locale.h>
 
-#define LIM_MAX 100
-#define LIM_MIN 1
+#define LIM_MAX 100 // Лимит на максимальный размер массивов
+#define LIM_MIN 1 // // Лимит на минимальный размер массивов
 
-void swap( int *x, int *y );
-void printArray ( int *Arr, int len );
-void scanArray ( int *Arr, int len );
-void setUp ( int *A, int *B );
-void scanWithChecking ( int *x, int min, int max, char *text );
-void scanWithIncreasingChecking ( int *x, int *y, int i );
+void swap( int *x, int *y ); // Функции замены значений переменных
+void printArray ( int *Arr, int len ); // Функция выводы в консоль массива
+void scanArray ( int *Arr, int len ); // Функция ввода массива
+void setUp ( int *A, int *B ); // Функция задания стандартных значений
+void scanWithChecking ( int *x, int min, int max, char *text ); // Функция ввода переменной с проверкой введенного значения на попадание в числовой интервал
+void scanWithIncreasingChecking ( int *x, int *y, int i ); // Функция ввода переменной с проверкой введенного значения x на то, что оно больше, чем y
 
-void InPlaceMergeSort ( int *A, int *B, int N, int M );
+void InPlaceMergeSort ( int *A, int *B, int N, int M ); // Собственно функция сортировки слиянием на месте (т.е. без дополнительной памяти)
 
-int min( int x, int y );
-int *getValueFromINdex( int i, int *A, int *B, int N );
+int min( int x, int y ); // Возвращает минимальный элемент из x и y
+int *getValueFromINdex( int i, int *A, int *B, int N ); // Возвращает значение элемента массивов A или B, в зависимости от индекса массива, полученного мысленным примыканием массива B к массиву A
 
 int main( void )
 {
