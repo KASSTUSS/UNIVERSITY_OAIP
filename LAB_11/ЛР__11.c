@@ -96,6 +96,10 @@ int main()
 
     Solve(mainMatrix, BMatrix, amountVar);
     
+    for(int i = 0; i < amountVar; i++) 
+    {
+        free(mainMatrix[i]);
+    }
     free(unknownElements);
     free(mainMatrix);
     free(BMatrix);
